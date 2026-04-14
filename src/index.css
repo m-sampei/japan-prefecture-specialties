@@ -14,7 +14,8 @@ body {
 }
 
 .app {
-  max-width: 960px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
   padding: 24px 16px 40px;
 }

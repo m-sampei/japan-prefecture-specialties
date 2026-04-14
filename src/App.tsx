@@ -194,8 +194,6 @@ function App() {
 
   return (
     <main className="app">
-      <h1 className="title">都道府県の名産品サンプル</h1>
-
       <div className="datasetToolbar">
         <label htmlFor="datasetSelect" className="datasetLabel">
           表示データ
