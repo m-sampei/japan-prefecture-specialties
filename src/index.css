@@ -4,5 +4,83 @@
 
 body {
   margin: 0;
-  background: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f8fafc;
+  color: #1f2937;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 28px;
+}
+
+.mapArea {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.japanMap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.japanMap .is-clickable,
+.japanMap .is-clickable * {
+  cursor: pointer;
+}
+
+.japanMap .is-clickable:hover,
+.japanMap .is-clickable:hover * {
+  opacity: 0.85;
+}
+
+.japanMap .is-selected,
+.japanMap .is-selected * {
+  fill: #fb923c !important;
+  opacity: 1;
+}
+
+.panel {
+  margin-top: 16px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.prefectureName {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.specialtyList {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.specialtyList li + li {
+  margin-top: 4px;
+}
+
+.empty,
+.loading,
+.mapError {
+  margin: 0;
+}
+
+.mapError {
+  color: #b91c1c;
 }
