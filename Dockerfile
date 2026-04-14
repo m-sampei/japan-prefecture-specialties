@@ -3,7 +3,8 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --include=dev
+RUN npm ci --include=dev \
+  && npm install @rollup/rollup-linux-x64-musl --no-save
 
 COPY . .
 
