@@ -57,6 +57,7 @@ docker compose down -v
 ```
 
 ## 名産品データ（サンプル）
+- 都道府県データは `src/data/prefectures.json` で管理
 - 北海道: じゃがいも、ジンギスカン、白い恋人
 - 東京都: 人形焼、雷おこし、深川めし
 - 静岡県: お茶、うなぎ、わさび
@@ -70,6 +71,8 @@ docker compose down -v
     ├── App.tsx
     ├── assets
     │   └── map-full.svg
+    ├── data
+    │   └── prefectures.json
     ├── main.tsx
     └── index.css
 ```

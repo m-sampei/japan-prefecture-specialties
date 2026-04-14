@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mapSvgRaw from './assets/map-full.svg?raw';
+import prefecturesByCode from './data/prefectures.json';
 
 /** 都道府県選択状態 */
 type SelectedPrefecture = {
@@ -10,17 +11,11 @@ type SelectedPrefecture = {
 /** 名産品表示データ */
 type SpecialtyData = {
   name: string;
-  specialties: string[];
+  specialties: readonly string[];
 };
 
 /** 都道府県コードごとの名産品データ */
-const SPECIALTIES_BY_CODE: Record<string, SpecialtyData> = {
-  '01': { name: '北海道', specialties: ['じゃがいも', 'ジンギスカン', '白い恋人'] },
-  '13': { name: '東京都', specialties: ['人形焼', '雷おこし', '深川めし'] },
-  '22': { name: '静岡県', specialties: ['お茶', 'うなぎ', 'わさび'] },
-  '27': { name: '大阪府', specialties: ['たこ焼き', 'お好み焼き', '豚まん'] },
-  '40': { name: '福岡県', specialties: ['明太子', 'とんこつラーメン', 'あまおう'] },
-};
+const SPECIALTIES_BY_CODE: Record<string, SpecialtyData> = prefecturesByCode;
 
 /** data-code がない場合に使う class 名と都道府県コードの対応 */
 const CLASS_TO_CODE: Record<string, string> = {
@@ -66,7 +61,7 @@ function buildSelectedPrefecture(element: Element): SelectedPrefecture | null {
 
   const nameFromSvg = element.getAttribute('data-name');
   const nameFromMaster = SPECIALTIES_BY_CODE[code]?.name;
-  const name = nameFromSvg ?? nameFromMaster ?? `都道府県コード ${code}`;
+  const name = nameFromMaster ?? nameFromSvg ?? `都道府県コード ${code}`;
 
   return { code, name };
 }
@@ -163,7 +158,7 @@ function App() {
 
     const master = SPECIALTIES_BY_CODE[selectedPrefecture.code];
     return {
-      name: selectedPrefecture.name,
+      name: master?.name ?? selectedPrefecture.name,
       specialties: master?.specialties ?? [],
     };
   }, [selectedPrefecture]);
