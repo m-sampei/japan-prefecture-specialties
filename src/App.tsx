@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import mapSvgRaw from './assets/map-full.svg?raw';
-import prefecturesByCode from './data/prefectures.json';
 
 /** 都道府県選択状態 */
 type SelectedPrefecture = {
@@ -15,7 +14,13 @@ type SpecialtyData = {
 };
 
 /** 都道府県コードごとの名産品データ */
-const SPECIALTIES_BY_CODE: Record<string, SpecialtyData> = prefecturesByCode;
+type SpecialtyDataByCode = Record<string, SpecialtyData>;
+
+/** src/data 配下の名産品データセット */
+const DATASET_MODULES = import.meta.glob('./data/*.json', {
+  eager: true,
+  import: 'default',
+}) as Record<string, SpecialtyDataByCode>;
 
 /** data-code がない場合に使う class 名と都道府県コードの対応 */
 const CLASS_TO_CODE: Record<string, string> = {
@@ -30,6 +35,23 @@ const CLASS_TO_CODE: Record<string, string> = {
 const CLASS_SELECTOR = Object.keys(CLASS_TO_CODE)
   .map((className) => `.${className}`)
   .join(',');
+
+/** データセット表示名を生成 */
+function createDatasetLabel(path: string): string {
+  const fileName = path.split('/').pop() ?? path;
+  return fileName.replace(/\.json$/u, '');
+}
+
+/** 利用可能なデータセット一覧を生成 */
+function listDatasetOptions() {
+  return Object.entries(DATASET_MODULES)
+    .map(([path, data]) => ({
+      path,
+      label: createDatasetLabel(path),
+      data,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'ja'));
+}
 
 /** 都道府県コードを 2 桁に正規化 */
 function normalizeCode(rawCode: string | null): string | null {
@@ -60,8 +82,7 @@ function buildSelectedPrefecture(element: Element): SelectedPrefecture | null {
   }
 
   const nameFromSvg = element.getAttribute('data-name');
-  const nameFromMaster = SPECIALTIES_BY_CODE[code]?.name;
-  const name = nameFromMaster ?? nameFromSvg ?? `都道府県コード ${code}`;
+  const name = nameFromSvg ?? `都道府県コード ${code}`;
 
   return { code, name };
 }
@@ -149,23 +170,50 @@ function JapanMap({ selectedCode, onSelect }: JapanMapProps) {
 
 /** 都道府県選択と名産品表示を管理 */
 function App() {
+  const datasetOptions = useMemo(() => listDatasetOptions(), []);
+  const [selectedDatasetPath, setSelectedDatasetPath] = useState<string>(
+    () => datasetOptions[0]?.path ?? '',
+  );
   const [selectedPrefecture, setSelectedPrefecture] = useState<SelectedPrefecture | null>(null);
+
+  const specialtiesByCode = useMemo<SpecialtyDataByCode>(() => {
+    return datasetOptions.find((option) => option.path === selectedDatasetPath)?.data ?? {};
+  }, [datasetOptions, selectedDatasetPath]);
 
   const selectedSpecialties = useMemo(() => {
     if (!selectedPrefecture) {
       return null;
     }
 
-    const master = SPECIALTIES_BY_CODE[selectedPrefecture.code];
+    const master = specialtiesByCode[selectedPrefecture.code];
     return {
       name: master?.name ?? selectedPrefecture.name,
       specialties: master?.specialties ?? [],
     };
-  }, [selectedPrefecture]);
+  }, [selectedPrefecture, specialtiesByCode]);
 
   return (
     <main className="app">
       <h1 className="title">都道府県の名産品サンプル</h1>
+
+      <div className="datasetToolbar">
+        <label htmlFor="datasetSelect" className="datasetLabel">
+          表示データ
+        </label>
+        <select
+          id="datasetSelect"
+          className="datasetSelect"
+          value={selectedDatasetPath}
+          onChange={(event) => setSelectedDatasetPath(event.target.value)}
+          disabled={datasetOptions.length === 0}
+        >
+          {datasetOptions.map((option) => (
+            <option key={option.path} value={option.path}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <JapanMap
         selectedCode={selectedPrefecture?.code ?? null}

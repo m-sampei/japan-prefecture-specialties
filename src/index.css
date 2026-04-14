@@ -24,6 +24,28 @@ body {
   font-size: 28px;
 }
 
+.datasetToolbar {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.datasetLabel {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.datasetSelect {
+  min-width: 220px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 14px;
+}
+
 .mapArea {
   background: #ffffff;
   border: 1px solid #d1d5db;
